@@ -8,6 +8,8 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,7 +45,10 @@ class WorkResource extends Resource
                             ->default(Auth::user()->id),
 
                     ])
-                    ->required(),
+                    ->required()
+                    ->columnSpan([
+                        'md' => 0.5,
+                    ]),
 
                 Forms\Components\TextInput::make('bar_amount')
                     ->label('Bar Amount')
@@ -54,7 +59,10 @@ class WorkResource extends Resource
                         $set('total', $total);
                     })
                     ->numeric()
-                    ->placeholder('Enter bar amount'),
+                    ->placeholder('Enter bar amount')
+                    ->columnSpan([
+                        'md' => 0.5,
+                    ]),
 
                 Forms\Components\TextInput::make('kitchen_amount')
                     ->label('Kitchen Amount')
@@ -65,7 +73,10 @@ class WorkResource extends Resource
                         $set('total', $total);
                     })
                     ->numeric()
-                    ->placeholder('Enter kitchen amount'),
+                    ->placeholder('Enter kitchen amount')
+                    ->columnSpan([
+                        'md' => 1,
+                    ]),
 
                 Forms\Components\TextInput::make('chamber_amount')
                     ->label('Chamber Amount')
@@ -87,7 +98,10 @@ class WorkResource extends Resource
                         $set('total', $total);
                     })
                     ->numeric()
-                    ->placeholder('Enter bingalo amount'),
+                    ->placeholder('Enter bingalo amount')
+                    ->columnSpan([
+                        'md' => 1,
+                    ]),
 
                 Forms\Components\TextInput::make('cash_in')
                     ->label('Cash In')
@@ -117,10 +131,16 @@ class WorkResource extends Resource
                     ->numeric()
                     ->placeholder('Enter cash out'),
 
-                Forms\Components\Hidden::make('payout')
+                Forms\Components\TextInput::make('payout')
                     ->label('Payout')
                     ->disabled()
-                    ->dehydrated(),
+                    ->dehydrated()
+                    ->required()
+                    ->numeric()
+                    ->placeholder('Payout will be calculated')
+                    ->columnSpan([
+                        'md' => 1,
+                    ]),
 
                 Forms\Components\TextInput::make('total')
                     ->label('Total')
@@ -129,9 +149,10 @@ class WorkResource extends Resource
                     ->required()
                     ->numeric()
                     ->placeholder('Total will be calculated'),
+                    
                 Forms\Components\Hidden::make('user_id')
                     ->default(Auth::user()->id),
-            ]);
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -172,6 +193,22 @@ class WorkResource extends Resource
                     ->numeric()
                     ->money('rwf')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('bar_amount')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('kitchen_amount')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('chamber_amount')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('bingalo_amount')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('cash_in')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('cash_out')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('total')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
+                Tables\Columns\TextColumn::make('payout')
+                ->summarize(Sum::make()->label('Total')->money('rwf')),
             ])
             ->filters([
                 //

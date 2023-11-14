@@ -21,6 +21,6 @@ class SalaryController extends Controller
         $total=Work::withoutGlobalScope(WorkScope::class)->sum('payout');
 
         return view('salaries.index', ['employees' => $employees, 'employeeSalaries' => $employeeSalaries,'total'=>$total]);
-        return view('saralies.index');
+        
     }
 }
